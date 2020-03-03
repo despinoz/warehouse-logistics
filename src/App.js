@@ -2,10 +2,21 @@ import React, { useState, useEffect } from 'react';
 import 'antd/dist/antd.css';
 import * as firebase from 'firebase';
 
-import { AutoComplete, Spin, DatePicker, Input } from 'antd';
+import {
+  AutoComplete,
+  Spin,
+  DatePicker,
+  Input,
+  Select,
+  InputNumber
+} from 'antd';
+
+const InputGroup = Input.Group;
+const { Option } = Select;
 
 function App() {
   const [mpnc, setMpnc] = useState({});
+  const [number, setNumber] = useState(0);
 
   const db = firebase.firestore();
   let mpncRef = db.collection('mpnc');
@@ -33,6 +44,15 @@ function App() {
 
   const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
 
+  const calculateDecimals = val => {
+    if (val < 10) {
+      console.log(val / 100);
+    } else if (val < 100) {
+      console.log(+(val / 10).toFixed(2));
+    }
+    console.log('changed', val);
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <h1>Inv. Materia no Calificada</h1>
@@ -55,9 +75,22 @@ function App() {
           <DatePicker format={dateFormatList} />
           <br />
           <Input
-            placeholder="default size"
-            style={{ width: '200px', margin: '0 8px 8px 0' }}
+            placeholder="001-000646"
+            style={{ width: '250px' }}
             addonBefore="Guia de Remisión"
+          />
+          <InputGroup compact>
+            <Select defaultValue="Factura">
+              <Option value="F">Factura</Option>
+              <Option value="BV">Boleta de Venta</Option>
+            </Select>
+            <Input style={{ width: '25%' }} placeholder="0001-001762" />
+          </InputGroup>
+          <InputNumber
+            type="number"
+            style={{ width: '15%' }}
+            value={number}
+            onChange={calculateDecimals}
           />
         </div>
       )}
